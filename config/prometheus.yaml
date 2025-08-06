@@ -22,9 +22,19 @@ scrape_configs:
           - promtail
         type: A
         port: 9080
-        
-  # Add this new job to scrape metrics from our exporter
-  - job_name: 'http-metrics'
+
+  - job_name: 'nono-events-metrics-new'
+    # metrics_path defaults to /metrics
+    metrics_path: '/metrics/new'
     static_configs:
-      - targets:
-          - 'metrics-exporter:8082'
+      - targets: ['api.nono-events.de']
+        labels:
+          instance: 'nono-events-new'
+
+  - job_name: 'nono-events-metrics'
+    # metrics_path defaults to /metrics, so it's explicitly defined here for clarity
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['api.nono-events.de']
+        labels:
+          instance: 'nono-events-old'
