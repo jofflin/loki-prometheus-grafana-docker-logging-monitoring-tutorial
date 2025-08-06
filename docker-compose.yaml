@@ -8,19 +8,6 @@ volumes:
   loki:
 
 services:
-  # Metrics exporter to convert logs to Prometheus metrics
-  metrics-exporter:
-    build: 
-      context: ./scripts
-      dockerfile: Dockerfile
-    volumes:
-      - ./loki/:/var/log/
-    ports:
-      - "8082:8082"
-    networks:
-      - loki
-    depends_on:
-      - log-generator
 
 
 
@@ -69,23 +56,7 @@ services:
       ]
     networks:
       - loki
-
-  # for testing purposes only, disable in production
-  log-generator:
-    image: mingrammer/flog:0.4.3
-    command:
-      - --loop
-      - --format=json
-      - --number=10  # number of log lines to generate per second
-      - --delay=100ms  # delay between log lines
-      - --output=/var/log/generated-logs.txt
-      - --overwrite
-      - --type=log
-    volumes:
-      - ./loki/:/var/log/
-    networks:
-      - loki
-
+      
   promtail:
     image: grafana/promtail:3.4.3
     volumes:
@@ -140,9 +111,9 @@ services:
     networks:
       - loki
     restart: always
-    deploy:
-      mode: replicated
-      replicas: 3
+    # deploy:
+    #   mode: replicated
+    #   replicas: 3
 
   loki-write:
     image: *lokiImage
@@ -155,9 +126,9 @@ services:
     networks:
       - loki
     restart: always
-    deploy:
-      mode: replicated
-      replicas: 3
+    # deploy:
+    #   mode: replicated
+    #   replicas: 3
 
   loki-backend:
     image: *lokiImage
@@ -171,9 +142,9 @@ services:
     networks:
       - loki
     restart: always
-    deploy:
-      mode: replicated
-      replicas: 3
+    # deploy:
+    #   mode: replicated
+    #   replicas: 3
 
   # alertmanager to enable receiving alerts
   alertmanager:
